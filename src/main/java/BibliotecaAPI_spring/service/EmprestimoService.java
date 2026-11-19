@@ -15,7 +15,7 @@ public class EmprestimoService {
 	@Autowired
 	private EmprestimoRepository repository;
 	
-	public List<Emprestimo> listar() {
+	public List<Emprestimo> listarEmprestimos() {
 		return repository.findAll();
 	}
 
@@ -24,8 +24,17 @@ public class EmprestimoService {
 		return null;
 	}
 
-	public Emprestimo criarEmprestimo() {
+	public Emprestimo criarEmprestimo(EmprestimoDTO dto) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	public Emprestimo atualizarEmprestimo(Long id, EmprestimoDTO dto) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public void apagarEmprestimo(Long id) {
+		// TODO Auto-generated method stub
 	}
 }
