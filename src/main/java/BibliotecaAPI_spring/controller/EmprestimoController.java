@@ -1,8 +1,9 @@
 package BibliotecaAPI_spring.controller;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -10,16 +11,16 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import BibliotecaAPI_spring.service.EmprestimoService;
-import jakarta.validation.Valid;
 import BibliotecaAPI_spring.DTO.EmprestimoDTO;
 import BibliotecaAPI_spring.model.Emprestimo;
 import BibliotecaAPI_spring.model.Status;
+import BibliotecaAPI_spring.service.EmprestimoService;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/v1/emprestimos")
@@ -29,8 +30,8 @@ public class EmprestimoController {
 	private EmprestimoService service;
 	
 	@GetMapping
-	public List<Emprestimo> listar(Status status) {
-		return service.listarEmprestimos(status);
+	public PagedModel<Emprestimo> listar(@RequestParam(required = false) Status status, @PageableDefault(size = 5) Pageable pageable) {
+		return new PagedModel<>(service.listarEmprestimos(status, pageable));
 	}
 	
 	@GetMapping("/{id}")

@@ -2,6 +2,7 @@ package BibliotecaAPI_spring.exception;
 
 import java.time.LocalDateTime;
 
+import org.springframework.data.core.PropertyReferenceException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -20,5 +21,12 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<ErroResposta> tratarConflito(ConflitoException ex) {
 		ErroResposta erro = new ErroResposta(409, ex.getMessage(), LocalDateTime.now());
 		return ResponseEntity.status(HttpStatus.CONFLICT).body(erro);
+	}
+	
+	@ExceptionHandler(PropertyReferenceException.class)
+	public ResponseEntity<ErroResposta> tratarPropriedadeNaoReferenciada(PropertyReferenceException ex){
+		String mensagem = "Propriedade não referenciada: "+ex.getPropertyName();
+		ErroResposta erro = new ErroResposta(400, mensagem, LocalDateTime.now());
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(erro);
 	}
 }

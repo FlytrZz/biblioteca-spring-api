@@ -1,8 +1,9 @@
 package BibliotecaAPI_spring.controller;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import BibliotecaAPI_spring.DTO.LivroDTO;
@@ -27,8 +29,8 @@ public class LivroController {
 	private LivroService service;
 	
 	@GetMapping
-	public List<Livro> listar() {
-		return service.listarLivros();
+	public PagedModel<Livro> listar(@RequestParam(required = false)String autor, @PageableDefault(size = 10, sort = "titulo") Pageable pageable) {
+		return new PagedModel<>(service.listarLivros(autor, pageable));
 	}
 	
 	@GetMapping("/{id}")
