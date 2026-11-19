@@ -4,7 +4,8 @@ import java.time.LocalDate;
 
 import BibliotecaAPI_spring.model.Status;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
-public record EmprestimoDTO(@NotBlank Long idLivro, @NotBlank Long idUsuario, @NotBlank LocalDate dataEmprestimo, @NotBlank LocalDate dataPrevistaDevolucao, @NotBlank LocalDate dataDevolucao, @NotBlank Status status) {
+public record EmprestimoDTO(@NotNull Long idLivro, @NotNull Long idUsuario, @NotNull LocalDate dataPrevistaDevolucao) {
 
 }

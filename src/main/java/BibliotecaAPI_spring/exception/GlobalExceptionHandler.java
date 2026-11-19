@@ -15,4 +15,10 @@ public class GlobalExceptionHandler {
 		ErroResposta erro = new ErroResposta(404, ex.getMessage(), LocalDateTime.now());
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(erro);
 	}
+	
+	@ExceptionHandler(ConflitoException.class)
+	public ResponseEntity<ErroResposta> tratarConflito(ConflitoException ex) {
+		ErroResposta erro = new ErroResposta(409, ex.getMessage(), LocalDateTime.now());
+		return ResponseEntity.status(HttpStatus.CONFLICT).body(erro);
+	}
 }

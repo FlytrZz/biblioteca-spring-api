@@ -41,12 +41,12 @@ public class UsuarioController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(service.criarUsuario(dto));
 	}
 	
-	@PutMapping
+	@PutMapping("/{id}")
 	public ResponseEntity<Usuario> atualizar(@PathVariable("id") Long id, @RequestBody @Valid UsuarioDTO dto) {
 		return ResponseEntity.ok(service.atualizarUsuario(id, dto));
 	}
 	
-	@DeleteMapping
+	@DeleteMapping("/{id}")
 	public ResponseEntity<Usuario> deletar(@PathVariable("id") Long id) {
 		service.apagarUsuario(id);
 		return ResponseEntity.noContent().build();
