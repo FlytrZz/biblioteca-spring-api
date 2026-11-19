@@ -1,14 +1,15 @@
 package BibliotecaAPI_spring.service;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import BibliotecaAPI_spring.DTO.UsuarioDTO;
 import BibliotecaAPI_spring.exception.NaoEncontradoException;
 import BibliotecaAPI_spring.model.Usuario;
 import BibliotecaAPI_spring.repository.UsuarioRepository;
+import jakarta.transaction.Transactional;
 
 @Service
 public class UsuarioService {
@@ -16,19 +17,24 @@ public class UsuarioService {
 	@Autowired
 	private UsuarioRepository repository;
 	
-	public List<Usuario> listarUsuarios() {
-		return repository.findAll();
+	public Page<Usuario> listarUsuarios(String nome, Pageable pageable) {
+		if(nome == null || nome.isBlank()) {
+			return repository.findAll(pageable);
+		}
+		return repository.findByNomeContainingIgnoreCase(nome, pageable);
 	}
 
 	public Usuario buscarID(Long id) {
 		return repository.findById(id).orElseThrow(() -> new NaoEncontradoException("Usuário inexistente!"));
 	}
 
+	@Transactional
 	public Usuario criarUsuario(UsuarioDTO dto) {
 		Usuario usuario = new Usuario(dto.nome(), dto.email());
 		return repository.save(usuario);
 	}
 
+	@Transactional
 	public Usuario atualizarUsuario(Long id, UsuarioDTO dto) {
 		Usuario atualizado = buscarID(id);
 		atualizado.setNome(dto.nome());
@@ -36,6 +42,7 @@ public class UsuarioService {
 		return repository.save(atualizado);
 	}
 
+	@Transactional
 	public void apagarUsuario(Long id) {
 		Usuario apagado = buscarID(id);
 		repository.delete(apagado);
