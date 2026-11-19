@@ -2,33 +2,45 @@ package BibliotecaAPI_spring.service;
 
 import java.util.List;
 
-import BibliotecaAPI_spring.DTO.LivroDTO;
-import BibliotecaAPI_spring.model.Livro;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+import BibliotecaAPI_spring.DTO.LivroDTO;
+import BibliotecaAPI_spring.exception.NaoEncontradoException;
+import BibliotecaAPI_spring.model.Livro;
+import BibliotecaAPI_spring.repository.LivroRepository;
+
+@Service
 public class LivroService {
 
+	@Autowired
+	private LivroRepository repository;
+	
 	public List<Livro> listarLivros() {
-		// TODO Auto-generated method stub
-		return null;
+		return repository.findAll();
 	}
 
 	public Livro buscarID(Long id) {
-		// TODO Auto-generated method stub
-		return null;
+		return repository.findById(id).orElseThrow(() -> new NaoEncontradoException("Livro inexistente!"));
 	}
 
 	public Livro criarLivro(LivroDTO dto) {
-		// TODO Auto-generated method stub
-		return null;
+		Livro livro = new Livro(dto.titulo(), dto.autor(), dto.isbn(), dto.quantidadeDisponivel());
+		return repository.save(livro);
 	}
 
 	public Livro atualizarLivro(Long id, LivroDTO dto) {
-		// TODO Auto-generated method stub
-		return null;
+		Livro atualizado = buscarID(id);
+		atualizado.setTitulo(dto.titulo());
+		atualizado.setAutor(dto.autor());
+		atualizado.setIsbn(dto.isbn());
+		atualizado.setQuantidadeDisponivel(dto.quantidadeDisponivel());
+		return repository.save(atualizado);
 	}
 
 	public void apagarLivro(Long id) {
-		// TODO Auto-generated method stub
+		Livro apagado = buscarID(id);
+		repository.delete(apagado);
 	}
 
 }
