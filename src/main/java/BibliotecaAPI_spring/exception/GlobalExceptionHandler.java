@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -26,6 +27,13 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(PropertyReferenceException.class)
 	public ResponseEntity<ErroResposta> tratarPropriedadeNaoReferenciada(PropertyReferenceException ex){
 		String mensagem = "Propriedade não referenciada: "+ex.getPropertyName();
+		ErroResposta erro = new ErroResposta(400, mensagem, LocalDateTime.now());
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(erro);
+	}
+	
+	@ExceptionHandler(MethodArgumentTypeMismatchException.class)
+	public ResponseEntity<ErroResposta> tratarConversãoInvalida(MethodArgumentTypeMismatchException ex){
+		String mensagem = "Conversão do "+ex.getPropertyName()+" inválida";
 		ErroResposta erro = new ErroResposta(400, mensagem, LocalDateTime.now());
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(erro);
 	}

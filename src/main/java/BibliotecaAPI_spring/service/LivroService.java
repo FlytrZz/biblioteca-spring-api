@@ -34,6 +34,7 @@ public class LivroService {
 		return repository.save(livro);
 	}
 
+	@Transactional
 	public Livro atualizarLivro(Long id, LivroDTO dto) {
 		Livro atualizado = buscarID(id);
 		atualizado.setTitulo(dto.titulo());
@@ -43,6 +44,7 @@ public class LivroService {
 		return repository.save(atualizado);
 	}
 
+	@Transactional
 	public void apagarLivro(Long id) {
 		Livro apagado = buscarID(id);
 		repository.delete(apagado);

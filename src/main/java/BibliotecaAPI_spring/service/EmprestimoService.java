@@ -80,6 +80,7 @@ public class EmprestimoService {
 		return repository.save(devolvido);
 	}
 
+	@Transactional
 	public void apagarEmprestimo(Long id) {
 		Emprestimo apagado = buscarID(id);
 		if(apagado.getStatus() == Status.ATIVO) {
