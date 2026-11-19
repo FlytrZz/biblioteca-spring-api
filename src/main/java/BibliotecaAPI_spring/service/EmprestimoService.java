@@ -1,9 +1,10 @@
 package BibliotecaAPI_spring.service;
 
 import java.time.LocalDate;
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import BibliotecaAPI_spring.DTO.EmprestimoDTO;
@@ -32,11 +33,11 @@ public class EmprestimoService {
 	@Autowired
 	private UsuarioRepository usuarioRepository;
 	
-	public List<Emprestimo> listarEmprestimos(Status status) {
+	public Page<Emprestimo> listarEmprestimos(Status status, Pageable pageable) {
 		if(status == null) {
-			return repository.findAll();
+			return repository.findAll(pageable);
 		}
-		return repository.findByStatus(status);	
+		return repository.findByStatus(status, pageable);	
 	}
 
 	public Emprestimo buscarID(Long id) {
