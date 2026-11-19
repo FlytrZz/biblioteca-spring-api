@@ -2,35 +2,42 @@ package BibliotecaAPI_spring.service;
 
 import java.util.List;
 
-import org.jspecify.annotations.Nullable;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import BibliotecaAPI_spring.DTO.UsuarioDTO;
+import BibliotecaAPI_spring.exception.NaoEncontradoException;
 import BibliotecaAPI_spring.model.Usuario;
-import jakarta.validation.Valid;
+import BibliotecaAPI_spring.repository.UsuarioRepository;
 
+@Service
 public class UsuarioService {
 
+	@Autowired
+	private UsuarioRepository repository;
+	
 	public List<Usuario> listarUsuarios() {
-		// TODO Auto-generated method stub
-		return null;
+		return repository.findAll();
 	}
 
 	public Usuario buscarID(Long id) {
-		// TODO Auto-generated method stub
-		return null;
+		return repository.findById(id).orElseThrow(() -> new NaoEncontradoException("Usuário inexistente!"));
 	}
 
 	public Usuario criarUsuario(UsuarioDTO dto) {
-		// TODO Auto-generated method stub
-		return null;
+		Usuario usuario = new Usuario(dto.nome(), dto.email());
+		return repository.save(usuario);
 	}
 
 	public Usuario atualizarUsuario(Long id, UsuarioDTO dto) {
-		// TODO Auto-generated method stub
-		return null;
+		Usuario atualizado = buscarID(id);
+		atualizado.setNome(dto.nome());
+		atualizado.setEmail(dto.email());
+		return repository.save(atualizado);
 	}
 
 	public void apagarUsuario(Long id) {
-		// TODO Auto-generated method stub	
+		Usuario apagado = buscarID(id);
+		repository.delete(apagado);
 	}
 }

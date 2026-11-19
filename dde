@@ -1,0 +1,45 @@
+4816410 (HEAD, origin/main) Modelagem e Definição da base do sistema com os controllers, repository, services, model e etc
+ bin/.gitattributes                                                               |   2 +
+ bin/.gitignore                                                                   |  33 ++++++++++
+ bin/.mvn/wrapper/maven-wrapper.properties                                        |   3 +
+ bin/compose.yaml                                                                 |  10 +++
+ bin/mvnw                                                                         | 295 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ bin/mvnw.cmd                                                                     | 189 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ bin/pom.xml                                                                      |  89 ++++++++++++++++++++++++++
+ bin/src/main/java/BibliotecaAPI_spring/BibliotecaApiSpringApplication.class      | Bin 0 -> 1504 bytes
+ bin/src/main/resources/application.properties                                    |   1 +
+ bin/src/test/java/BibliotecaAPI_spring/BibliotecaApiSpringApplicationTests.class | Bin 0 -> 1310 bytes
+ src/main/java/BibliotecaAPI_spring/DTO/EmprestimoDTO.java                        |  10 +++
+ src/main/java/BibliotecaAPI_spring/DTO/LivroDTO.java                             |   7 +++
+ src/main/java/BibliotecaAPI_spring/DTO/UsuarioDTO.java                           |   7 +++
+ src/main/java/BibliotecaAPI_spring/controller/EmprestimoController.java          |  41 ++++++++++++
+ src/main/java/BibliotecaAPI_spring/controller/LivroController.java               |   5 ++
+ src/main/java/BibliotecaAPI_spring/controller/UsuarioController.java             |   5 ++
+ src/main/java/BibliotecaAPI_spring/model/Emprestimo.java                         | 101 ++++++++++++++++++++++++++++++
+ src/main/java/BibliotecaAPI_spring/model/Livro.java                              |  75 ++++++++++++++++++++++
+ src/main/java/BibliotecaAPI_spring/model/Status.java                             |   7 +++
+ src/main/java/BibliotecaAPI_spring/model/Usuario.java                            |  53 ++++++++++++++++
+ src/main/java/BibliotecaAPI_spring/repository/EmprestimoRepository.java          |   9 +++
+ src/main/java/BibliotecaAPI_spring/service/EmprestimoService.java                |  31 ++++++++++
+ src/main/java/BibliotecaAPI_spring/service/LivroService.java                     |   5 ++
+ src/main/java/BibliotecaAPI_spring/service/UsuarioService.java                   |   5 ++
+ 24 files changed, 983 insertions(+)
+3f91e76 Merge branch 'main' of https://github.com/FlytrZz/biblioteca-spring-api
+fc5982c commit inicial da BibliotecaAPI-spring
+ .gitattributes                                                              |   2 +
+ .gitignore                                                                  |  33 +++++++++++
+ .mvn/wrapper/maven-wrapper.properties                                       |   3 +
+ compose.yaml                                                                |  10 ++++
+ mvnw                                                                        | 295 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ mvnw.cmd                                                                    | 189 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ pom.xml                                                                     |  89 ++++++++++++++++++++++++++++
+ src/main/java/BibliotecaAPI_spring/BibliotecaApiSpringApplication.java      |  13 +++++
+ src/main/resources/application.properties                                   |   1 +
+ src/test/java/BibliotecaAPI_spring/BibliotecaApiSpringApplicationTests.java |  13 +++++
+ 10 files changed, 648 insertions(+)
+d51f791 Delete .gitignore
+ .gitignore | 24 ------------------------
+ 1 file changed, 24 deletions(-)
+23017ee Initial commit
+ .gitignore | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
