@@ -41,7 +41,7 @@ public class EmprestimoService {
 	}
 
 	public Emprestimo buscarID(Long id) {
-		return repository.findById(id).orElseThrow(() -> new NaoEncontradoException("Emprestimo inexistente!"));
+		return repository.findById(id).orElseThrow(() -> new NaoEncontradoException("Empréstimo inexistente!"));
 	}
 
 	@Transactional
@@ -52,8 +52,8 @@ public class EmprestimoService {
 			throw new ConflitoException("O livro não tem mais exemplares disponiveis!");
 		}
 		long ativos = repository.countByUsuarioIdAndStatus(usuario.getId(), Status.ATIVO);
-		if(ativos > limite_emprestimos) {
-			throw new ConflitoException("O usuário já possui 3 empréstimos ativos");
+		if(ativos >= limite_emprestimos) {
+			throw new ConflitoException("O usuário já possui "+limite_emprestimos+" empréstimos ativos");
 		}
 		livro.setQuantidadeDisponivel(livro.getQuantidadeDisponivel() - 1);
 		livroRepository.save(livro);
@@ -73,7 +73,7 @@ public class EmprestimoService {
 			throw new ConflitoException("Este empréstimo já foi devolvido!");
 		}
 		Livro livro = devolvido.getLivro();
-		livro.setQuantidadeDisponivel(livro.getQuantidadeDisponivel() - 1);
+		livro.setQuantidadeDisponivel(livro.getQuantidadeDisponivel() + 1);
 		livroRepository.save(livro);
 		devolvido.setDataDevolucao(LocalDate.now());
 		devolvido.setStatus(Status.DEVOLVIDO);
