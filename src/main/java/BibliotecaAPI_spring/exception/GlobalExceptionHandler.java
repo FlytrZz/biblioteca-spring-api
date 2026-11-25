@@ -1,5 +1,6 @@
 package BibliotecaAPI_spring.exception;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import org.springframework.data.core.PropertyReferenceException;
@@ -36,5 +37,11 @@ public class GlobalExceptionHandler {
 		String mensagem = "Conversão do "+ex.getPropertyName()+" inválida";
 		ErroResposta erro = new ErroResposta(400, mensagem, LocalDateTime.now());
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(erro);
+	}
+	
+	@ExceptionHandler(IsbnDuplicadoException.class)
+	public ResponseEntity<ErroResposta> tratarIsbnDuplicado(IsbnDuplicadoException ex) {
+		ErroResposta erro = new ErroResposta(409, ex.getMessage(), LocalDateTime.now());
+		return ResponseEntity.status(HttpStatus.CONFLICT).body(erro);
 	}
 }

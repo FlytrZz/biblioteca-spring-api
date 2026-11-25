@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import BibliotecaAPI_spring.DTO.LivroDTO;
+import BibliotecaAPI_spring.exception.IsbnDuplicadoException;
 import BibliotecaAPI_spring.exception.NaoEncontradoException;
 import BibliotecaAPI_spring.model.Livro;
 import BibliotecaAPI_spring.repository.LivroRepository;
@@ -30,6 +31,9 @@ public class LivroService {
 
 	@Transactional
 	public Livro criarLivro(LivroDTO dto) {
+		if(repository.existsByIsbn(dto.isbn())) {
+			throw new IsbnDuplicadoException("Já existe um livro com esse ISBN!");
+		}
 		Livro livro = new Livro(dto.titulo(), dto.autor(), dto.isbn(), dto.quantidadeDisponivel());
 		return repository.save(livro);
 	}
@@ -37,6 +41,9 @@ public class LivroService {
 	@Transactional
 	public Livro atualizarLivro(Long id, LivroDTO dto) {
 		Livro atualizado = buscarID(id);
+		if(repository.existsByIsbnAndIdNot(dto.isbn(), id)) {
+			throw new IsbnDuplicadoException("Já existe um livro com esse ISBN!");
+		}	
 		atualizado.setTitulo(dto.titulo());
 		atualizado.setAutor(dto.autor());
 		atualizado.setIsbn(dto.isbn());
