@@ -45,9 +45,7 @@ class LivroServiceTest {
 	void setUp() {
 		livro = new Livro("O Pequeno Principe","Johnathan Berls", "978-3-16-148410-0", 2);
 		livro.setId(1L);
-		
 		dto = new LivroDTO("Progresso e Pobreza", "Henry George", "208-2-19-275215-0", 4);
-		
 		dtoAtualizado = new LivroDTO("Riqueza das Nações","Adam Smith","925-2-08-219700-1",3);
 	}
 	

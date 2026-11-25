@@ -64,7 +64,6 @@ class EmprestimoServiceTest {
 		usuario.setId(1L);
 		emprestimo.setLivro(livro);
 		emprestimo.setUsuario(usuario);
-		
 		dto = new EmprestimoDTO(livro.getId(), usuario.getId(), LocalDate.of(2026, 12, 01));
 	}
 	
