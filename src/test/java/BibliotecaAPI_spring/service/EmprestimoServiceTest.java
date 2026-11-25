@@ -1,6 +1,5 @@
 package BibliotecaAPI_spring.service;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -87,11 +86,11 @@ class EmprestimoServiceTest {
 		when(repository.findAll(pageable)).thenReturn(pagina);
 		
 		//ACT
-		Page<Emprestimo> resultado = service.listarEmprestimos(null, pageable);
+		Page<Emprestimo> lista = service.listarEmprestimos(null, pageable);
 		
 		//ASSERT
-		Assertions.assertEquals(2, resultado.getNumberOfElements());
-		Assertions.assertNotNull(resultado);
+		Assertions.assertEquals(2, lista.getNumberOfElements());
+		Assertions.assertNotNull(lista);
 		verify(repository, times(1)).findAll(pageable);
 	}
 	
@@ -104,12 +103,12 @@ class EmprestimoServiceTest {
 		when(repository.findByStatus(emprestimo.getStatus(), pageable)).thenReturn(pagina);
 		
 		//ACT
-		Page<Emprestimo> resultado = service.listarEmprestimos(emprestimo.getStatus(), pageable);
+		Page<Emprestimo> lista = service.listarEmprestimos(emprestimo.getStatus(), pageable);
 		
 		//ASSERT
-		Assertions.assertNotNull(resultado);
-		Assertions.assertEquals(1, resultado.getNumberOfElements());
-		Assertions.assertEquals(Status.ATIVO, resultado.getContent().get(0).getStatus());
+		Assertions.assertNotNull(lista);
+		Assertions.assertEquals(1, lista.getNumberOfElements());
+		Assertions.assertEquals(Status.ATIVO, lista.getContent().get(0).getStatus());
 		verify(repository, times(1)).findByStatus(emprestimo.getStatus(), pageable);
 		verify(repository, never()).findAll(any(Pageable.class));
 	}
@@ -120,11 +119,11 @@ class EmprestimoServiceTest {
 		when(repository.findById(emprestimo.getId())).thenReturn(Optional.of(emprestimo));
 		
 		//ACT
-		Emprestimo achado = service.buscarID(emprestimo.getId());
+		Emprestimo valido = service.buscarID(emprestimo.getId());
 		
 		//ASSERT
-		Assertions.assertNotNull(achado);
-		Assertions.assertEquals(emprestimo.getId(), achado.getId());
+		Assertions.assertNotNull(valido);
+		Assertions.assertEquals(emprestimo.getId(), valido.getId());
 		verify(repository, times(1)).findById(emprestimo.getId());
 	}
 	
@@ -134,10 +133,10 @@ class EmprestimoServiceTest {
 		when(repository.findById(emprestimo.getId())).thenReturn(Optional.empty());
 		
 		//ACT
-		Exception naoAchado = assertThrows(NaoEncontradoException.class, () -> service.buscarID(emprestimo.getId()));
+		Exception invalido = Assertions.assertThrows(NaoEncontradoException.class, () -> service.buscarID(emprestimo.getId()));
 		
 		//ASSERT
-		Assertions.assertEquals("Empréstimo inexistente!", naoAchado.getMessage());
+		Assertions.assertEquals("Empréstimo inexistente!", invalido.getMessage());
 		verify(repository, times(1)).findById(emprestimo.getId());
 	}
 	
@@ -149,21 +148,21 @@ class EmprestimoServiceTest {
 		when(repository.save(any(Emprestimo.class))).thenReturn(emprestimo);
 		
 		//ACT
-		Emprestimo criado = service.criarEmprestimo(dto);
+		service.criarEmprestimo(dto);
 		
 		//ASSERT
 		ArgumentCaptor<Emprestimo> captor = ArgumentCaptor.forClass(Emprestimo.class);
+		verify(livroRepository).save(livro);
 		verify(repository, times(1)).save(captor.capture());
-		Emprestimo salvo = captor.getValue();
+		Emprestimo criado = captor.getValue();
 		
 		Assertions.assertNotNull(criado);
-		Assertions.assertEquals(livro, salvo.getLivro());
-		Assertions.assertEquals(usuario, salvo.getUsuario());
-		Assertions.assertEquals(Status.ATIVO, salvo.getStatus());
-		Assertions.assertEquals(LocalDate.now(), salvo.getDataEmprestimo());
-		Assertions.assertEquals(dto.dataPrevistaDevolucao(), salvo.getDataPrevistaDevolucao());
+		Assertions.assertEquals(livro, criado.getLivro());
+		Assertions.assertEquals(usuario, criado.getUsuario());
+		Assertions.assertEquals(Status.ATIVO, criado.getStatus());
+		Assertions.assertEquals(LocalDate.now(), criado.getDataEmprestimo());
+		Assertions.assertEquals(dto.dataPrevistaDevolucao(), criado.getDataPrevistaDevolucao());
 		Assertions.assertEquals(3, livro.getQuantidadeDisponivel());
-		verify(livroRepository, times(1)).save(livro);
 	}
 	
 	@Test
@@ -172,7 +171,7 @@ class EmprestimoServiceTest {
 		when(livroRepository.findById(livro.getId())).thenReturn(Optional.empty());
 				
 		//ACT
-		Exception semLivro = assertThrows(NaoEncontradoException.class, () -> service.criarEmprestimo(dto));
+		Exception semLivro = Assertions.assertThrows(NaoEncontradoException.class, () -> service.criarEmprestimo(dto));
 				
 		//ASSERT
 		Assertions.assertEquals("Livro inexistente!", semLivro.getMessage());
@@ -188,7 +187,7 @@ class EmprestimoServiceTest {
 		when(usuarioRepository.findById(usuario.getId())).thenReturn(Optional.empty());
 				
 		//ACT
-		Exception semUsuario = assertThrows(NaoEncontradoException.class, () -> service.criarEmprestimo(dto));
+		Exception semUsuario = Assertions.assertThrows(NaoEncontradoException.class, () -> service.criarEmprestimo(dto));
 				
 		//ASSERT
 		Assertions.assertEquals("Usuário inexistente!", semUsuario.getMessage());
@@ -205,7 +204,7 @@ class EmprestimoServiceTest {
 		when(usuarioRepository.findById(usuario.getId())).thenReturn(Optional.of(usuario));
 		
 		//ACT
-		ConflitoException exemplaresIndisponiveis = assertThrows(ConflitoException.class, () -> service.criarEmprestimo(dto));
+		ConflitoException exemplaresIndisponiveis = Assertions.assertThrows(ConflitoException.class, () -> service.criarEmprestimo(dto));
 		
 		//ASSERT
 		Assertions.assertEquals("O livro não tem mais exemplares disponiveis!", exemplaresIndisponiveis.getMessage());
@@ -223,7 +222,7 @@ class EmprestimoServiceTest {
 		when(repository.countByUsuarioIdAndStatus(usuario.getId(), Status.ATIVO)).thenReturn(ativos);
 		
 		//ACT
-		ConflitoException limiteExato = assertThrows(ConflitoException.class, () -> service.criarEmprestimo(dto));
+		ConflitoException limiteExato = Assertions.assertThrows(ConflitoException.class, () -> service.criarEmprestimo(dto));
 		
 		//ASSERT
 		Assertions.assertEquals("O usuário já possui 3 empréstimos ativos", limiteExato.getMessage());
@@ -241,7 +240,7 @@ class EmprestimoServiceTest {
 		when(repository.countByUsuarioIdAndStatus(usuario.getId(), Status.ATIVO)).thenReturn(ativos);
 		
 		//ACT
-		ConflitoException limiteAcima = assertThrows(ConflitoException.class, () -> service.criarEmprestimo(dto));
+		ConflitoException limiteAcima = Assertions.assertThrows(ConflitoException.class, () -> service.criarEmprestimo(dto));
 		
 		//ASSERT
 		Assertions.assertEquals("O usuário já possui 3 empréstimos ativos", limiteAcima.getMessage());
@@ -300,7 +299,7 @@ class EmprestimoServiceTest {
 		when(repository.findById(emprestimo.getId())).thenReturn(Optional.of(emprestimo));
 		
 		//ACT
-		ConflitoException devolvidoAntes = assertThrows(ConflitoException.class, () -> service.devolverEmprestimo(emprestimo.getId()));
+		ConflitoException devolvidoAntes = Assertions.assertThrows(ConflitoException.class, () -> service.devolverEmprestimo(emprestimo.getId()));
 		
 		//ASSERT
 		Assertions.assertEquals("Este empréstimo já foi devolvido!", devolvidoAntes.getMessage());
@@ -315,10 +314,10 @@ class EmprestimoServiceTest {
 		when(repository.findById(emprestimo.getId())).thenReturn(Optional.empty());
 		
 		//ACT
-		NaoEncontradoException naoEncontrado = assertThrows(NaoEncontradoException.class, () -> service.devolverEmprestimo(emprestimo.getId()));
+		NaoEncontradoException invalido = Assertions.assertThrows(NaoEncontradoException.class, () -> service.devolverEmprestimo(emprestimo.getId()));
 		
 		//ASSERT
-		Assertions.assertEquals("Empréstimo inexistente!", naoEncontrado.getMessage());
+		Assertions.assertEquals("Empréstimo inexistente!", invalido.getMessage());
 		verify(livroRepository, never()).save(any(Livro.class));
 		verify(repository, never()).save(any(Emprestimo.class));
 	}
@@ -346,7 +345,7 @@ class EmprestimoServiceTest {
 		when(repository.findById(emprestimo.getId())).thenReturn(Optional.of(emprestimo));
 		
 		//ACT
-		ConflitoException ativo = assertThrows(ConflitoException.class, () -> service.apagarEmprestimo(emprestimo.getId()));
+		ConflitoException ativo = Assertions.assertThrows(ConflitoException.class, () -> service.apagarEmprestimo(emprestimo.getId()));
 		
 		//ASSERT
 		Assertions.assertEquals("Não é possivel apagar um empréstimo ainda ativo, registre a devolução antes disso!", ativo.getMessage());
@@ -359,10 +358,10 @@ class EmprestimoServiceTest {
 		when(repository.findById(emprestimo.getId())).thenReturn(Optional.empty());
 		
 		//ACT
-		NaoEncontradoException naoEncontrado = assertThrows(NaoEncontradoException.class, () -> service.apagarEmprestimo(emprestimo.getId()));
+		NaoEncontradoException invalido = Assertions.assertThrows(NaoEncontradoException.class, () -> service.apagarEmprestimo(emprestimo.getId()));
 		
 		//ASSERT
-		Assertions.assertEquals("Empréstimo inexistente!", naoEncontrado.getMessage());
+		Assertions.assertEquals("Empréstimo inexistente!", invalido.getMessage());
 		verify(repository, never()).delete(any(Emprestimo.class));
 	}
 }
