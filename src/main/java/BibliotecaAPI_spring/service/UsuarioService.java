@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import BibliotecaAPI_spring.DTO.UsuarioDTO;
 import BibliotecaAPI_spring.exception.NaoEncontradoException;
+import BibliotecaAPI_spring.exception.PropriedadeUnicaDuplicadaException;
 import BibliotecaAPI_spring.model.Usuario;
 import BibliotecaAPI_spring.repository.UsuarioRepository;
 import jakarta.transaction.Transactional;
@@ -30,6 +31,9 @@ public class UsuarioService {
 
 	@Transactional
 	public Usuario criarUsuario(UsuarioDTO dto) {
+		if(repository.existsByEmail(dto.email())) {
+			throw new PropriedadeUnicaDuplicadaException("Esse email já pertence a uma pessoa!");
+		}
 		Usuario usuario = new Usuario(dto.nome(), dto.email());
 		return repository.save(usuario);
 	}
@@ -37,6 +41,9 @@ public class UsuarioService {
 	@Transactional
 	public Usuario atualizarUsuario(Long id, UsuarioDTO dto) {
 		Usuario atualizado = buscarID(id);
+		if(repository.existsByEmailAndIdNot(dto.email(), id)) {
+			throw new PropriedadeUnicaDuplicadaException("Esse email já pertence a uma pessoa!");
+		}
 		atualizado.setNome(dto.nome());
 		atualizado.setEmail(dto.email());
 		return repository.save(atualizado);

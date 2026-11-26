@@ -23,8 +23,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import BibliotecaAPI_spring.DTO.LivroDTO;
-import BibliotecaAPI_spring.exception.IsbnDuplicadoException;
 import BibliotecaAPI_spring.exception.NaoEncontradoException;
+import BibliotecaAPI_spring.exception.PropriedadeUnicaDuplicadaException;
 import BibliotecaAPI_spring.model.Livro;
 import BibliotecaAPI_spring.repository.LivroRepository;
 
@@ -114,7 +114,7 @@ class LivroServiceTest {
 	}
 	
 	@Test
-	void testarCriarLivroComIsbnNaoRegistrado() {
+	void testarCriarLivroComIsbnNovo() {
 		//ARRANGE
 		when(repository.existsByIsbn(dto.isbn())).thenReturn(false);
 		when(repository.save(any(Livro.class))).thenAnswer(i -> i.getArgument(0));
@@ -140,7 +140,7 @@ class LivroServiceTest {
 		when(repository.existsByIsbn(dto.isbn())).thenReturn(true);
 		
 		//ACT
-		IsbnDuplicadoException isbnExistente = Assertions.assertThrows(IsbnDuplicadoException.class, () -> service.criarLivro(dto));
+		PropriedadeUnicaDuplicadaException isbnExistente = Assertions.assertThrows(PropriedadeUnicaDuplicadaException.class, () -> service.criarLivro(dto));
 		
 		//ASSERT
 		Assertions.assertEquals("Já existe um livro com esse ISBN!", isbnExistente.getMessage());	
@@ -168,6 +168,22 @@ class LivroServiceTest {
 		verify(repository, times(1)).existsByIsbnAndIdNot(dtoAtualizado.isbn(), livro.getId());
 		verify(repository, times(1)).save(any(Livro.class));
 	}
+
+	@Test
+	void testarAtualizarLivroComIsbnDeOutroLivro() {
+		//ARRANGE
+		when(repository.findById(livro.getId())).thenReturn(Optional.of(livro));
+		when(repository.existsByIsbnAndIdNot(dtoAtualizado.isbn(), livro.getId())).thenReturn(true);
+		
+		//ACT
+		PropriedadeUnicaDuplicadaException isbnJaUsado = Assertions.assertThrows(PropriedadeUnicaDuplicadaException.class, () -> service.atualizarLivro(livro.getId(), dtoAtualizado));
+		
+		//ASSERT
+		Assertions.assertEquals("Já existe um livro com esse ISBN!", isbnJaUsado.getMessage());
+		verify(repository, times(1)).findById(livro.getId());
+		verify(repository, times(1)).existsByIsbnAndIdNot(dtoAtualizado.isbn(), livro.getId());
+		verify(repository, never()).save(any(Livro.class));
+	}
 	
 	@Test
 	void testarAtualizarLivroComIDInvalido() {
@@ -180,22 +196,6 @@ class LivroServiceTest {
 		//ASSERT
 		Assertions.assertEquals("Livro inexistente!", invalido.getMessage());
 		verify(repository, times(1)).findById(livro.getId());
-		verify(repository, never()).save(any(Livro.class));
-	}
-	
-	@Test
-	void testarAtualizarLivroComIsbnDeOutroLivro() {
-		//ARRANGE
-		when(repository.findById(livro.getId())).thenReturn(Optional.of(livro));
-		when(repository.existsByIsbnAndIdNot(dtoAtualizado.isbn(), livro.getId())).thenReturn(true);
-		
-		//ACT
-		IsbnDuplicadoException isbnJaUsado = Assertions.assertThrows(IsbnDuplicadoException.class, () -> service.atualizarLivro(livro.getId(), dtoAtualizado));
-		
-		//ASSERT
-		Assertions.assertEquals("Já existe um livro com esse ISBN!", isbnJaUsado.getMessage());
-		verify(repository, times(1)).findById(livro.getId());
-		verify(repository, times(1)).existsByIsbnAndIdNot(dtoAtualizado.isbn(), livro.getId());
 		verify(repository, never()).save(any(Livro.class));
 	}
 	
