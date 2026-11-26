@@ -39,8 +39,8 @@ public class GlobalExceptionHandler {
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(erro);
 	}
 	
-	@ExceptionHandler(IsbnDuplicadoException.class)
-	public ResponseEntity<ErroResposta> tratarIsbnDuplicado(IsbnDuplicadoException ex) {
+	@ExceptionHandler(PropriedadeUnicaDuplicadaException.class)
+	public ResponseEntity<ErroResposta> tratarPropriedadeUnicaDuplicada(PropriedadeUnicaDuplicadaException ex) {
 		ErroResposta erro = new ErroResposta(409, ex.getMessage(), LocalDateTime.now());
 		return ResponseEntity.status(HttpStatus.CONFLICT).body(erro);
 	}
