@@ -34,7 +34,7 @@ public class GlobalExceptionHandler {
 	
 	@ExceptionHandler(MethodArgumentTypeMismatchException.class)
 	public ResponseEntity<ErroResposta> tratarConversãoInvalida(MethodArgumentTypeMismatchException ex){
-		String mensagem = "Conversão do "+ex.getPropertyName()+" inválida";
+		String mensagem = "A conversão do "+ex+" é inválida";
 		ErroResposta erro = new ErroResposta(400, mensagem, LocalDateTime.now());
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(erro);
 	}
